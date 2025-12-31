@@ -1,0 +1,29 @@
+{
+	"instructions": "Exemple de structure JSON pour automatisation IA",
+	"usage": "Utilisez cette structure pour générer automatiquement des sites via IA",
+	"example_prompt": "Créez un site vitrine pour 'Mon Entreprise SARL' à Paris avec services personnalisés. Couleur principale: bleu. Contact: 01.XX.XX.XX.XX",
+	"expected_output": {
+		"branding": {
+			"companyName": "Mon Entreprise SARL",
+			"slogan": "Votre partenaire de confiance",
+			"logoUrl": "https://example.com/logo.png"
+		},
+		"theme": {
+			"primaryColor": "#1e40af",
+			"secondaryColor": "#3b82f6"
+		},
+		"contact": {
+			"phone": "01.XX.XX.XX.XX",
+			"email": "contact@monentreprise.fr",
+			"address": "Paris, France"
+		},
+		"services": [
+			{
+				"name": "Service 1",
+				"description": "Description du service professionnel",
+				"imageUrl": "https://example.com/service.jpg",
+				"price": "À partir de 30€"
+			}
+		]
+	}
+}

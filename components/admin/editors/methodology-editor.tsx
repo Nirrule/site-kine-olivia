@@ -1,0 +1,166 @@
+"use client";
+
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import type { SiteConfig } from "@/types/site-config";
+import Image from "next/image";
+import { Plus, Trash2 } from "lucide-react";
+
+interface MethodologyEditorProps {
+	config: SiteConfig;
+	onUpdate: (updates: Partial<SiteConfig>) => void;
+}
+
+export function MethodologyEditor({
+	config,
+	onUpdate,
+}: MethodologyEditorProps) {
+	const methodology = config.methodology || {
+		title: "Méthodo",
+		content: [],
+		image: "",
+		ctaText: "",
+		ctaLink: "",
+	};
+
+	const updateMethodology = (field: string, value: any) => {
+		onUpdate({
+			methodology: {
+				...methodology,
+				[field]: value,
+			},
+		});
+	};
+
+	const addParagraph = () => {
+		updateMethodology("content", [...methodology.content, ""]);
+	};
+
+	const removeParagraph = (index: number) => {
+		updateMethodology(
+			"content",
+			methodology.content.filter((_, i) => i !== index),
+		);
+	};
+
+	const updateParagraph = (index: number, value: string) => {
+		updateMethodology(
+			"content",
+			methodology.content.map((p, i) => (i === index ? value : p)),
+		);
+	};
+
+	return (
+		<Card className="border-0 shadow-lg">
+			<CardHeader>
+				<CardTitle>Section Méthodologie</CardTitle>
+				<CardDescription>
+					Configurez la section décrivant votre méthodologie de travail
+				</CardDescription>
+			</CardHeader>
+			<CardContent className="space-y-6">
+				<div className="space-y-2">
+					<Label htmlFor="methodoTitle">Titre</Label>
+					<Input
+						id="methodoTitle"
+						value={methodology.title}
+						onChange={(e) => updateMethodology("title", e.target.value)}
+						placeholder="Méthodo"
+					/>
+				</div>
+
+				<div className="space-y-2">
+					<Label htmlFor="methodoImage">Image URL</Label>
+					<Input
+						id="methodoImage"
+						value={methodology.image}
+						onChange={(e) => updateMethodology("image", e.target.value)}
+						placeholder="https://example.com/image.svg"
+					/>
+					<p className="text-sm text-muted-foreground">
+						URL de l'image illustrative
+					</p>
+					{methodology.image && (
+						<div className="mt-2">
+							<Image
+								src={methodology.image}
+								alt="Aperçu"
+								width={640}
+								height={180}
+								className="w-full max-w-md h-32 object-cover border border-border rounded"
+								onError={() => {}}
+							/>
+						</div>
+					)}
+				</div>
+
+				<div className="space-y-4">
+					<div className="flex items-center justify-between">
+						<Label>Paragraphes de contenu</Label>
+						<Button
+							type="button"
+							size="sm"
+							onClick={addParagraph}
+							className="flex items-center gap-2"
+						>
+							<Plus className="w-4 h-4" />
+							Ajouter un paragraphe
+						</Button>
+					</div>
+					<div className="space-y-3">
+						{methodology.content.map((paragraph, index) => (
+							<div key={index} className="flex gap-2 items-start">
+								<Textarea
+									value={paragraph}
+									onChange={(e) => updateParagraph(index, e.target.value)}
+									placeholder="Texte du paragraphe..."
+									rows={3}
+									className="flex-1"
+								/>
+								<Button
+									type="button"
+									size="icon"
+									variant="destructive"
+									onClick={() => removeParagraph(index)}
+								>
+									<Trash2 className="w-4 h-4" />
+								</Button>
+							</div>
+						))}
+					</div>
+				</div>
+
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+					<div className="space-y-2">
+						<Label htmlFor="methodoCtaText">Texte du bouton</Label>
+						<Input
+							id="methodoCtaText"
+							value={methodology.ctaText}
+							onChange={(e) => updateMethodology("ctaText", e.target.value)}
+							placeholder="Prendre rendez-vous"
+						/>
+					</div>
+
+					<div className="space-y-2">
+						<Label htmlFor="methodoCtaLink">Lien du bouton</Label>
+						<Input
+							id="methodoCtaLink"
+							value={methodology.ctaLink}
+							onChange={(e) => updateMethodology("ctaLink", e.target.value)}
+							placeholder="https://..."
+						/>
+					</div>
+				</div>
+			</CardContent>
+		</Card>
+	);
+}

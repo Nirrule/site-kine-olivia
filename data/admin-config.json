@@ -1,0 +1,7 @@
+{
+ "adminCode": "mehdi240618",
+ "lastUpdated": "2025-08-17T14:17:33.165Z",
+ "sessionTimeout": 60,
+ "maxLoginAttempts": 5,
+ "lockoutDuration": 15
+}

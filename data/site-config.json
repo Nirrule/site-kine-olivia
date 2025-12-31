@@ -1,0 +1,192 @@
+{
+  "version": "v1",
+  "metadata": {
+    "title": "Olivia Jaumain - Kinésithérapeute",
+    "description": "Kinésithérapeute spécialisée en sport, troubles musculo-squelettiques et mâchoire (ATM). Consultations sur rendez-vous.",
+    "keywords": [
+      "kinésithérapie",
+      "kinésithérapeute",
+      "sport",
+      "troubles musculo-squelettiques",
+      "ATM",
+      "thérapie manuelle",
+      "douleurs chroniques",
+      "rééducation"
+    ],
+    "faviconUrl": "/favicon.ico"
+  },
+  "branding": {
+    "companyName": "Olivia Jaumain",
+    "logo": "/OJ.svg",
+    "favicon": "",
+    "logoUrl": "",
+    "slogan": "Kinésithérapeute spécialisée à votre service"
+  },
+  "theme": {
+    "primary": "#A66BE1",
+    "secondary": "#FED7AB"
+  },
+  "contact": {
+    "phone": "+32 474 68 43 96",
+    "email": "jaumainolivia1002@gmail.com",
+    "address": "Avenue de broqueville 270",
+    "city": "Woluwé-Saint-Lambert",
+    "postalCode": "1200"
+  },
+  "hero": {
+    "title": "Olivia Jaumain",
+    "subtitle": "Kinésithérapeute spécialisée",
+    "description": "Bienvenue sur mon site Internet ! Je m'appelle Olivia, j'ai été diplômée en 2020 à la Haute École Léonard de Vinci au Parnasse et je vous reçois aisément en français, néerlandais et anglais. Grâce à mon expérience, mes connaissances basées sur des ressources fiables et ma motivation à vous accompagner dans votre parcours de rééducation, vos séances dans mon cabinet seront adaptées afin de répondre à vos besoins spécifiques, tout cela avec une écoute très active de ma part. Intéressés ? Poursuivez la lecture pour en savoir plus.",
+    "backgroundImage": "/heroBanner.svg",
+    "ctaText": "Prendre rendez-vous",
+    "ctaLink": "https://www.doctoranytime.be/d/kinesitherapeute/olivia-jaumain",
+    "headline": "Olivia Jaumain",
+    "subheadline": "Kinésithérapeute - Spécialisations multiples pour votre bien-être",
+    "ctaLabel": "Prendre rendez-vous",
+    "ctaHref": "https://www.doctoranytime.be/d/kinesitherapeute/olivia-jaumain",
+    "backgroundUrl": "/heroBanner.svg",
+    "stats": []
+  },
+  "specializations": {
+    "title": "Spécialisations",
+    "subtitle": "Il est important pour moi de constamment me former afin d'utiliser les meilleurs outils de traitement ayant été validés scientifiquement et récemment.",
+    "mainList": [
+      {
+        "id": "spec-1",
+        "title": "Kinésithérapie du sport"
+      },
+      {
+        "id": "spec-2",
+        "title": "Kinésithérapie des troubles musculo-squelettiques"
+      },
+      {
+        "id": "spec-3",
+        "title": "Kinésithérapie de la mâchoire (ATM)"
+      }
+    ],
+    "secondaryList": [
+      {
+        "id": "spec-4",
+        "title": "Thérapie manuelle : la palpation rachidienne"
+      },
+      {
+        "id": "spec-5",
+        "title": "Cancer du sein"
+      },
+      {
+        "id": "spec-6",
+        "title": "Crochetage"
+      },
+      {
+        "id": "spec-7",
+        "title": "Douleurs chroniques"
+      },
+      {
+        "id": "spec-8",
+        "title": "..."
+      }
+    ],
+    "ctaText": "Prendre rendez-vous",
+    "ctaLink": "https://www.doctoranytime.be/d/kinesitherapeute/olivia-jaumain"
+  },
+  "services": [],
+  "kinesitherapy": {
+    "title": "Kinésithérapie ?",
+    "content": [
+      "La kinésithérapie est la thérapie par le mouvement (Kinés(i)-, du gr. κίνησις qui signifie \"mouvement\" et | Thérapie de θεραπεία qui signifie \"soins médicaux, traitement\").",
+      "Le mouvement étant une des caractéristiques principales d'un être vivant, la kinésithérapie peut s'appliquer à une infinité de domaines. Que ce soit pour pouvoir courir après un accouchement, pour pouvoir manger son sandwich sans être gênée par sa mâchoire, pour pouvoir se lever de son fauteuil sans douleurs et avec facilités ou encore pour pouvoir marquer le meilleur tir au but de votre vie après une opération des ligaments croisés, vous aurez besoin d'un kinésithérapeute."
+    ],
+    "image": "/kinesitherapy_section.svg"
+  },
+  "methodology": {
+    "title": "Méthodo",
+    "content": [
+      "Principes fondamentaux de ma pratique professionnelle.",
+      "Je fonctionne actuellement en faisant la plupart du temps un mixte de travail passif et actif : j'ai pu me perfectionner dans ces deux manières de fonctionner grâce aux formations citées ci-dessus.",
+      "Le plan de traitement établi dépend évidemment de la situation pathologique de mes patients et de leur profil. J'accorde beaucoup d'importance à votre histoire afin de répondre au mieux à VOS besoins de VOTRE vie quotidienne. Certains patients répondront mieux aux exercices et moins aux techniques manuelles, pour d'autres ce sera l'inverse : il existe une multitude de manières dont la séance peut se dérouler et mon objectif est de cibler précisément vos objectifs et de vous permettre de les atteindre grâce à un suivi individualisé et adapté à votre personne."
+    ],
+    "image": "/methodo_section.svg",
+    "ctaText": "Prendre rendez-vous",
+    "ctaLink": "https://www.doctoranytime.be/d/kinesitherapeute/olivia-jaumain"
+  },
+  "practicalInfo": {
+    "title": "Infos pratiques",
+    "sessionDuration": "Chaque séance dure 30 minutes.",
+    "pricing": [
+      {
+        "id": "price-1",
+        "label": "1ère séance",
+        "price": "38€*",
+        "duration": "40 minutes"
+      },
+      {
+        "id": "price-2",
+        "label": "2ème séance",
+        "price": "30,80€*",
+        "duration": "30 minutes"
+      }
+    ],
+    "reminders": [
+      "*(séances conventionnées)",
+      "N'oubliez pas de prendre un essuie et une tenue confortable avec vous (de préférence un short)."
+    ],
+    "infoBlocks": [
+      {
+        "id": "block-1",
+        "title": "Paiement",
+        "content": "Le paiement peut se faire par cash, QR code ou par virement."
+      },
+      {
+        "id": "block-2",
+        "title": "Mutuelle",
+        "content": "Il est nécessaire d'apporter sa prescription de kinésithérapie pour pouvoir être remboursé auprès de votre mutuelle. Vous pouvez néanmoins venir sans prescriptions."
+      },
+      {
+        "id": "block-3",
+        "title": "Annulation",
+        "content": "Sauf cas de force majeure, une séance non annulée au moins 24 heures à l'avance vous sera facturée."
+      },
+      {
+        "id": "block-4",
+        "title": "Contact",
+        "content": "+32 474 68 43 96\njaumainolivia1002@gmail.com"
+      }
+    ],
+    "ctaText": "Prendre rendez-vous",
+    "ctaLink": "https://www.doctoranytime.be/d/kinesitherapeute/olivia-jaumain"
+  },
+  "about": {
+    "title": "À propos",
+    "description": "",
+    "image": "",
+    "features": []
+  },
+  "gallery": {
+    "title": "Galerie",
+    "images": [],
+    "categories": []
+  },
+  "footer": {
+    "description": "Kinésithérapeute spécialisée. Consultations sur rendez-vous via doctoranytime.be",
+    "socialLinks": [],
+    "quickLinks": [
+      {
+        "title": "Spécialisations",
+        "url": "#specialization"
+      },
+      {
+        "title": "Kinésithérapie",
+        "url": "#kine"
+      },
+      {
+        "title": "Méthodo",
+        "url": "#methodo"
+      },
+      {
+        "title": "Infos pratiques",
+        "url": "#practicalInfo"
+      }
+    ]
+  },
+  "lastModified": "2025-12-24T15:30:39.817Z"
+}
