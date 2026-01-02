@@ -91,7 +91,7 @@ ssh ${VPS_HOST} bash << EOF
     fi
     
     echo "${YELLOW}📦 Installation des dépendances...${NC}"
-    npm ci
+    npm install
     
     echo "${YELLOW}🏗️  Build de l'application...${NC}"
     npm run build
