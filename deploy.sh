@@ -7,6 +7,7 @@ APP_NAME="site-kine-olivia"
 DEPLOY_PATH="/var/www/${APP_NAME}"
 REPO_URL="git@github.com:Nirrule/site-kine-olivia.git"
 NODE_PORT=3000
+SERVER_USER="ubuntu"
 
 # Couleurs pour les logs
 GREEN='\033[0;32m'
@@ -75,8 +76,10 @@ ssh ${VPS_HOST} bash << EOF
     # Créer le répertoire si nécessaire
     if [ ! -d "${DEPLOY_PATH}" ]; then
         sudo mkdir -p ${DEPLOY_PATH}
-        sudo chown -R ${SERVER_USER}:${SERVER_USER} ${DEPLOY_PATH}
     fi
+    
+    # S'assurer que l'utilisateur a les bonnes permissions
+    sudo chown -R \${USER}:\${USER} ${DEPLOY_PATH}
     
     cd ${DEPLOY_PATH}
     
