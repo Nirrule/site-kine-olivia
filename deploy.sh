@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # Configuration
-SERVER_IP="83.228.213.103"
-SERVER_USER="ubuntu"
+VPS_HOST="kine-vps"
 DOMAIN="kineoliviajaumain.be"
 APP_NAME="site-kine-olivia"
 DEPLOY_PATH="/var/www/${APP_NAME}"
@@ -38,7 +37,7 @@ echo -e "${GREEN}✓${NC} Push réussi"
 
 # 3. Vérifier la connexion SSH
 echo -e "\n${YELLOW}📡 Vérification de la connexion SSH...${NC}"
-if ! ssh -o ConnectTimeout=10 ${SERVER_USER}@${SERVER_IP} "echo 'Connexion OK'" > /dev/null 2>&1; then
+if ! ssh -o ConnectTimeout=10 ${VPS_HOST} "echo 'Connexion OK'" > /dev/null 2>&1; then
     echo -e "${RED}❌ Impossible de se connecter au serveur${NC}"
     exit 1
 fi
@@ -47,7 +46,7 @@ echo -e "${GREEN}✓${NC} Connexion SSH OK"
 # 4. Déploiement sur le VPS
 echo -e "\n${YELLOW}📦 Déploiement sur le VPS...${NC}"
 
-ssh ${SERVER_USER}@${SERVER_IP} bash << EOF
+ssh ${VPS_HOST} bash << EOF
     set -e
     
     # Installer Node.js (v20 LTS) si pas installé
@@ -57,11 +56,6 @@ ssh ${SERVER_USER}@${SERVER_IP} bash << EOF
         sudo apt-get install -y nodejs
     fi
     
-    # Installer pnpm si pas installé
-    if ! command -v pnpm &> /dev/null; then
-        echo "${YELLOW}Installation de pnpm...${NC}"
-        sudo npm install -g pnpm
-    fi
     
     # Installer PM2 si pas installé
     if ! command -v pm2 &> /dev/null; then
@@ -97,10 +91,10 @@ ssh ${SERVER_USER}@${SERVER_IP} bash << EOF
     fi
     
     echo "${YELLOW}📦 Installation des dépendances...${NC}"
-    pnpm install --frozen-lockfile
+    npm ci
     
     echo "${YELLOW}🏗️  Build de l'application...${NC}"
-    pnpm run build
+    npm run build
     
     echo "${YELLOW}🔄 Redémarrage avec PM2...${NC}"
     
@@ -108,11 +102,11 @@ ssh ${SERVER_USER}@${SERVER_IP} bash << EOF
     pm2 delete ${APP_NAME} 2>/dev/null || true
     
     # Démarrer l'application
-    pm2 start pnpm --name "${APP_NAME}" -- start
+    pm2 start npm --name "${APP_NAME}" -- start
     pm2 save
     
     # Configurer PM2 au démarrage
-    sudo env PATH=\$PATH:/usr/bin pm2 startup systemd -u ${SERVER_USER} --hp /home/${SERVER_USER} 2>/dev/null || true
+    sudo env PATH=\$PATH:/usr/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu 2>/dev/null || true
     
     echo "${YELLOW}🌐 Configuration nginx...${NC}"
     
