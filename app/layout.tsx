@@ -22,6 +22,11 @@ export const metadata: Metadata = {
  title: "Olivia Jaumain - Kinésithérapeute",
  description:
   "Kinésithérapeute spécialisée en sport, troubles musculo-squelettiques et mâchoire (ATM). Consultations sur rendez-vous.",
+ icons: {
+  icon: "/OJ.svg",
+  shortcut: "/OJ.svg",
+  apple: "/OJ.svg",
+ },
 };
 
 export default function RootLayout({
