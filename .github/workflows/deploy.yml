@@ -1,0 +1,172 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main, master]
+  release:
+    types: [published]
+  workflow_dispatch: {}
+
+env:
+  DOMAIN: ${{ secrets.DOMAIN }}
+  ACME_EMAIL: ${{ secrets.ACME_EMAIL }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Build application
+      run: pnpm run build
+      env:
+        NEXT_PUBLIC_BASE_URL: https://${{ secrets.DOMAIN }}
+
+    - name: Test application
+      run: pnpm run start &
+        sleep 10
+        curl --fail http://localhost:3000 || exit 1
+
+    - name: Setup Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to DockerHub
+      if: github.event_name != 'pull_request'
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/kine-olivia:${{ github.sha }},${{ secrets.DOCKER_USERNAME }}/kine-olivia:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Deploy to server via SSH
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          # Create app directory if it doesn't exist
+          mkdir -p /opt/kine-olivia
+          
+          # Copy files to server
+          echo "${{ secrets.ENV_CONTENT }}" > /opt/kine-olivia/.env
+          
+          # Navigate to app directory
+          cd /opt/kine-olivia
+          
+          # Pull latest Docker image
+          docker pull ${{ secrets.DOCKER_USERNAME }}/kine-olivia:${{ github.sha }}
+          
+          # Create or update docker-compose.yml
+          cat > docker-compose.yml << 'EOF'
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v3.6.6
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --accesslog=true
+      - --log.level=INFO
+      - --api.insecure=true
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:-${{ secrets.ACME_EMAIL }}}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - letsencrypt:/letsencrypt
+    networks:
+      - web
+
+  app:
+    image: ${{ secrets.DOCKER_USERNAME }}/kine-olivia:${{ github.sha }}
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.app-http.rule=Host('${{ secrets.DOMAIN }}')
+      - traefik.http.routers.app-http.entrypoints=web
+      - traefik.http.routers.app-http.middlewares=redirect-to-https
+      - traefik.http.routers.app-https.rule=Host('${{ secrets.DOMAIN }}')
+      - traefik.http.routers.app-https.entrypoints=websecure
+      - traefik.http.routers.app-https.tls=true
+      - traefik.http.routers.app-https.tls.certresolver=letsencrypt
+      - traefik.http.routers.app-https.service=app
+      - traefik.http.services.app.loadbalancer.server.port=3000
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+    environment:
+      - NODE_ENV=production
+    networks:
+      - web
+    depends_on:
+      - traefik
+
+volumes:
+  letsencrypt:
+
+networks:
+  web:
+    driver: bridge
+EOF
+          
+          # Start the services
+          docker-compose down --remove-orphans || true
+          docker-compose up -d
+          
+          # Clean up old images
+          docker image prune -f
+          
+    - name: Verify deployment
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /opt/kine-olivia
+          docker-compose ps
+          
+          # Wait for services to be healthy
+          sleep 30
+          
+          # Check if services are running
+          if ! docker-compose ps | grep -q "Up"; then
+            echo "Deployment failed - services are not running properly"
+            docker-compose logs
+            exit 1
+          fi
+          
+          echo "Deployment successful!"

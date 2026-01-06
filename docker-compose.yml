@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v3.6.6
+    command:
+      # Enable Docker in Traefik, so it can listen to container changes
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      # Enable the access log, with HTTP requests
+      - --accesslog=true
+      # Enable the Traefik log
+      - --log.level=INFO
+      # Enable the API and dashboard in secure mode
+      - --api.insecure=true
+      # Configure entry points
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      # Configure certificates resolver to use lets encrypt
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:-admin@yourdomain.com}
+    ports:
+      # Listen on port 80 for HTTP (redirect to HTTPS)
+      - "80:80"
+      # Listen on port 443 for HTTPS
+      - "443:443"
+      # Listen on port 8080 for the dashboard
+      - "8080:8080"
+    volumes:
+      # Mount the Docker socket to listen to Docker events
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Mount the letsencrypt directory to persist certificates
+      - letsencrypt:/letsencrypt
+    networks:
+      - web
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      # HTTP to HTTPS redirect
+      - traefik.http.routers.app-http.rule=Host(`${DOMAIN:-yourdomain.com}`)
+      - traefik.http.routers.app-http.entrypoints=web
+      - traefik.http.routers.app-http.middlewares=redirect-to-https
+      # HTTPS router
+      - traefik.http.routers.app-https.rule=Host(`${DOMAIN:-yourdomain.com}`)
+      - traefik.http.routers.app-https.entrypoints=websecure
+      - traefik.http.routers.app-https.tls=true
+      - traefik.http.routers.app-https.tls.certresolver=letsencrypt
+      # Service
+      - traefik.http.routers.app-https.service=app
+      - traefik.http.services.app.loadbalancer.server.port=3000
+      # Middleware for redirect
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+    environment:
+      - NODE_ENV=production
+    networks:
+      - web
+    depends_on:
+      - traefik
+
+volumes:
+  letsencrypt:
+
+networks:
+  web:
+    driver: bridge
