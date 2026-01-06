@@ -15,7 +15,7 @@ RUN pnpm install --no-frozen-lockfile
 # Copy the rest of the application
 COPY . .
 
-# Build the application with standalone output
+# Build the application
 RUN pnpm run build
 
 # Production image
@@ -27,10 +27,10 @@ WORKDIR /app
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy built application from base image
-# For Next.js standalone output, we copy the whole .next/standalone directory
-COPY --from=base --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=base --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Copy Next.js build output and necessary files
+COPY --from=base --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=base --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=base --chown=nextjs:nodejs /app/package.json ./package.json
 COPY --from=base --chown=nextjs:nodejs /app/public ./public
 
 # Switch to non-root user
@@ -46,4 +46,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["pnpm", "start"]

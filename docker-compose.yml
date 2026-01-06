@@ -43,6 +43,10 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_BASE_URL=https://${DOMAINE_NAME}
+      - DOMAINE_NAME=${DOMAINE_NAME}
     labels:
       - traefik.enable=true
       # HTTP to HTTPS redirect
