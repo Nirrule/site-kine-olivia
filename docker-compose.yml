@@ -20,7 +20,7 @@ services:
       - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
       - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
       - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
-      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:-admin@yourdomain.com}
+      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}
     ports:
       # Listen on port 80 for HTTP (redirect to HTTPS)
       - "80:80"
@@ -44,11 +44,11 @@ services:
     labels:
       - traefik.enable=true
       # HTTP to HTTPS redirect
-      - traefik.http.routers.app-http.rule=Host(`${DOMAIN:-yourdomain.com}`)
+      - traefik.http.routers.app-http.rule=Host(`${DOMAIN_NAME}`)
       - traefik.http.routers.app-http.entrypoints=web
       - traefik.http.routers.app-http.middlewares=redirect-to-https
       # HTTPS router
-      - traefik.http.routers.app-https.rule=Host(`${DOMAIN:-yourdomain.com}`)
+      - traefik.http.routers.app-https.rule=Host(`${DOMAIN_NAME}`)
       - traefik.http.routers.app-https.entrypoints=websecure
       - traefik.http.routers.app-https.tls=true
       - traefik.http.routers.app-https.tls.certresolver=letsencrypt
