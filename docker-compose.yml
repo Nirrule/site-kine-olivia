@@ -41,14 +41,16 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
+    env_file:
+      - .env
     labels:
       - traefik.enable=true
       # HTTP to HTTPS redirect
-      - traefik.http.routers.app-http.rule=Host(`${DOMAIN_NAME}`)
+      - traefik.http.routers.app-http.rule=Host(`${DOMAINE_NAME}`)
       - traefik.http.routers.app-http.entrypoints=web
       - traefik.http.routers.app-http.middlewares=redirect-to-https
       # HTTPS router
-      - traefik.http.routers.app-https.rule=Host(`${DOMAIN_NAME}`)
+      - traefik.http.routers.app-https.rule=Host(`${DOMAINE_NAME}`)
       - traefik.http.routers.app-https.entrypoints=websecure
       - traefik.http.routers.app-https.tls=true
       - traefik.http.routers.app-https.tls.certresolver=letsencrypt
