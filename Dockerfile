@@ -1,37 +1,43 @@
+# Multi-stage build for optimal image size
 FROM node:20-alpine AS base
 
-# Install dependencies only when needed
 WORKDIR /app
 
 # Install pnpm globally
 RUN npm install -g pnpm
 
-# Copy package files
-COPY package.json pnpm-lock.yaml* ./
+# Copy package files only to leverage Docker layer caching
+COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies
 RUN pnpm install --no-frozen-lockfile
 
-# Copy the rest of the application
+# Copy source code
 COPY . .
 
 # Build the application
 RUN pnpm run build
 
-# Production image
+# Production image - use a minimal base image
 FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-# Don't run production as root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Install pnpm globally in the production image
+RUN npm install -g pnpm
 
-# Copy Next.js build output and necessary files
+# Create non-root user for security
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs && \
+    mkdir -p /app/data && \
+    chown nextjs:nodejs /app/data
+
+# Copy only necessary files from the build stage
 COPY --from=base --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=base --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=base --chown=nextjs:nodejs /app/package.json ./package.json
 COPY --from=base --chown=nextjs:nodejs /app/public ./public
+COPY --from=base --chown=nextjs:nodejs /app/data ./data
 
 # Switch to non-root user
 USER nextjs
